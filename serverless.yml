@@ -1,0 +1,81 @@
+service: aws-node-create-payment-api
+frameworkVersion: '3'
+
+plugins:
+  - serverless-plugin-scripts
+
+package:
+  excludeDevDependencies: true
+
+custom:
+  scripts:
+    hooks:
+      'package:initialize': yarn build
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: '*'
+    - Effect: 'Allow'
+      Action:
+        - 'lambda:InvokeFunction'
+      Resource: "*"
+    - Effect: 'Allow'
+      Action:
+        - 'events:PutEvents'
+      Resource: "*"
+
+functions:
+  createPayment:
+    handler: build/createPaymentHandler.handlePaymentCreation
+    events:
+      - http:
+          path: /pay
+          method: POST
+          cors: true
+
+  handleVendorPayment:
+    name: aws-node-create-payment-api-dev-handleVendorPayment
+    handler: build/processPaymentHandler.handleVendorPaymentProcessing
+    events:
+      - eventBridge:
+          eventBus: payments
+          pattern:
+            source:
+              - 'app-payment-vendor'
+
+  handleClientPayment:
+    name: aws-node-create-payment-api-dev-handleClientPayment
+    handler: build/processPaymentHandler.handleClientPaymentProcessing
+    events:
+      - eventBridge:
+          eventBus: payments
+          pattern:
+            source:
+              - 'app-payment-client'
+
+resources:
+  Resources:
+    TestDynamoDbTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: payment-api-test
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
