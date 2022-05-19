@@ -17,10 +17,12 @@ export const handlePaymentCreation = async (
 
   //TODO form validation on body
 
+  const detail = {...body, id: context.requestId};
+
   const ev = await eventBridge.putEvents({
     Entries: [
       {
-        Detail: JSON.stringify({...body, id: context.requestId}),
+        Detail: JSON.stringify(detail),
         EventBusName: "payment-api-events",
         DetailType: "PaymentCreated",
         Source: body.paymentSource === "client" ? "app-payment-client" : "app-payment-vendor",
@@ -33,6 +35,7 @@ export const handlePaymentCreation = async (
     body: JSON.stringify({
       message: "Payment created",
       event: ev,
+      payment: detail,
     }),
   };
 };
