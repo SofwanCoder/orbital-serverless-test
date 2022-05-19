@@ -12,10 +12,12 @@ export const handlePaymentCreation = async (
 ): Promise<APIGatewayProxyResult> => {
   const body = JSON.parse(event.body || "{}");
 
+  //TODO form validation on body
+
   const ev = await eventBridge.putEvents({
     Entries: [
       {
-        Detail: JSON.stringify({...body, id: context.requestId, requestId: context.requestId}),
+        Detail: JSON.stringify({...body, id: context.requestId}),
         EventBusName: "payments",
         DetailType: "PaymentCreated",
         Source: body.source === "client" ? "app-payment-client" : "app-payment-vendor",
