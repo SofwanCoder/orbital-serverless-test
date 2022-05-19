@@ -4,9 +4,11 @@ import { DynamoDB } from "aws-sdk";
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
+type PaymentSource = "vendor" | "client";
+
 interface TDetail {
     id: string;
-    paymentSource: string;
+    paymentSource: PaymentSource;
     destination: string;
     currency: string;
     amount: string;
@@ -66,12 +68,12 @@ export const handleClientPaymentProcessing = async (
 };
 
 
-async function savePayment(payment: Record<string, string>, processedBy: "vendor" | "client") {
+async function savePayment(payment: Record<string, string>, processedBy: PaymentSource) {
   await dynamoDb.put({
     TableName: "payment-api-test",
     Item: {
       id: payment.id,
-      paymentSource: payment.source,
+      paymentSource: payment.paymentSource,
       destination: payment.destination,
       currency: payment.currency,
       amount: payment.amount,
