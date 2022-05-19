@@ -39,10 +39,11 @@ functions:
   createPayment:
     handler: build/createPaymentHandler.handlePaymentCreation
     events:
-      - http:
+      - httpApi:
           path: /pay
           method: POST
           cors: true
+
 
   handleVendorPayment:
     name: aws-node-create-payment-api-dev-handleVendorPayment
