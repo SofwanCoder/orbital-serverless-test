@@ -48,7 +48,6 @@ async function savePayment(payment: TDetail, processedBy: PaymentSource) {
       destination: payment.destination,
       currency: payment.currency,
       amount: payment.amount,
-      requestId: payment.id,
       processedBy: `${processedBy}Handler`
     }
   }).promise()
