@@ -1,5 +1,5 @@
 import {
-  APIGatewayEventRequestContextV2, APIGatewayProxyResult, APIGatewayEvent}
+  Context, APIGatewayProxyResult, APIGatewayEvent}
   from "aws-lambda";
 
 import { EventBridge } from "aws-sdk";
@@ -10,14 +10,14 @@ const eventBridge = new EventBridge();
 
 export const handlePaymentCreation = async (
   event: APIGatewayEvent,
-  context: APIGatewayEventRequestContextV2
+  context: Context
 ): Promise<APIGatewayProxyResult> => {
 
   const body: CreatePaymentRequest = JSON.parse(event.body || "{}");
 
   //TODO form validation on body
 
-  const detail = {...body, id: context.requestId};
+  const detail = {...body, id: context.awsRequestId};
 
   const ev = await eventBridge.putEvents({
     Entries: [
