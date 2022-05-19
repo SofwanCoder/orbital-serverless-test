@@ -6,11 +6,19 @@ import { EventBridge } from "aws-sdk";
 
 const eventBridge = new EventBridge();
 
+interface CreatePaymentRequest {
+  paymentSource: "client" | "vendor";
+  currency: string;
+  destination: string;
+  amount: string;
+}
+
 export const handlePaymentCreation = async (
   event: APIGatewayEvent,
   context: APIGatewayEventRequestContextV2
 ): Promise<APIGatewayProxyResult> => {
-  const body = JSON.parse(event.body || "{}");
+
+  const body: CreatePaymentRequest = JSON.parse(event.body || "{}");
 
   //TODO form validation on body
 
@@ -20,7 +28,7 @@ export const handlePaymentCreation = async (
         Detail: JSON.stringify({...body, id: context.requestId}),
         EventBusName: "payments",
         DetailType: "PaymentCreated",
-        Source: body.source === "client" ? "app-payment-client" : "app-payment-vendor",
+        Source: body.paymentSource === "client" ? "app-payment-client" : "app-payment-vendor",
       },
     ],
   }).promise();

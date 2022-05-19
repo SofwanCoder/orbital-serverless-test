@@ -1,11 +1,19 @@
-import {APIGatewayProxyEvent, APIGatewayProxyResult} from "aws-lambda/trigger/api-gateway-proxy";
+import {EventBridgeEvent, APIGatewayProxyResult} from "aws-lambda";
 
 import { DynamoDB } from "aws-sdk";
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
+interface TDetail {
+    id: string;
+    paymentSource: string;
+    destination: string;
+    currency: string;
+    amount: string;
+}
+
 export const handleVendorPaymentProcessing = async (
-  event: APIGatewayProxyEvent
+  event: EventBridgeEvent<string, TDetail>
 ): Promise<APIGatewayProxyResult> => {
   const {
     body
@@ -32,7 +40,7 @@ export const handleVendorPaymentProcessing = async (
 
 
 export const handleClientPaymentProcessing = async (
-  event: APIGatewayProxyEvent
+  event: EventBridgeEvent<string, TDetail>
 ): Promise<APIGatewayProxyResult> => {
   const {
     body
