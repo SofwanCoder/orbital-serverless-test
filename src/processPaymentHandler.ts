@@ -41,7 +41,7 @@ export const handleClientPaymentProcessing = async (
 
 async function savePayment(payment: TDetail, processedBy: PaymentSource) {
   await dynamoDb.put({
-    TableName: "payment-api-test",
+    TableName: "payment-api-table",
     Item: {
       id: payment.id,
       paymentSource: payment.paymentSource,

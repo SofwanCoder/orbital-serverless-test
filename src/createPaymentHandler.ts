@@ -21,7 +21,7 @@ export const handlePaymentCreation = async (
     Entries: [
       {
         Detail: JSON.stringify({...body, id: context.requestId}),
-        EventBusName: "payments",
+        EventBusName: "payment-api-events",
         DetailType: "PaymentCreated",
         Source: body.paymentSource === "client" ? "app-payment-client" : "app-payment-vendor",
       },

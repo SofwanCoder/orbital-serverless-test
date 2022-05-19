@@ -43,7 +43,6 @@ functions:
       - httpApi:
           path: /pay
           method: POST
-          cors: true
 
 
   handleVendorPayment:
@@ -51,7 +50,7 @@ functions:
     handler: build/processPaymentHandler.handleVendorPaymentProcessing
     events:
       - eventBridge:
-          eventBus: payments
+          eventBus: payment-api-events
           pattern:
             source:
               - 'app-payment-vendor'
@@ -61,7 +60,7 @@ functions:
     handler: build/processPaymentHandler.handleClientPaymentProcessing
     events:
       - eventBridge:
-          eventBus: payments
+          eventBus: payment-api-events
           pattern:
             source:
               - 'app-payment-client'
@@ -71,7 +70,7 @@ resources:
     TestDynamoDbTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: payment-api-test
+        TableName: payment-api-table
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
