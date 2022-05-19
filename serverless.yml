@@ -1,4 +1,4 @@
-service: aws-node-create-payment-api
+service: aws-node-payment-api
 frameworkVersion: '3'
 
 plugins:
@@ -37,6 +37,7 @@ provider:
 
 functions:
   createPayment:
+    name: createPayment
     handler: build/createPaymentHandler.handlePaymentCreation
     events:
       - httpApi:
@@ -46,7 +47,7 @@ functions:
 
 
   handleVendorPayment:
-    name: aws-node-create-payment-api-dev-handleVendorPayment
+    name: handleVendorPayment
     handler: build/processPaymentHandler.handleVendorPaymentProcessing
     events:
       - eventBridge:
@@ -56,7 +57,7 @@ functions:
               - 'app-payment-vendor'
 
   handleClientPayment:
-    name: aws-node-create-payment-api-dev-handleClientPayment
+    name: handleClientPayment
     handler: build/processPaymentHandler.handleClientPaymentProcessing
     events:
       - eventBridge:

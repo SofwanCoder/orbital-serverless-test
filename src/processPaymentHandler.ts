@@ -1,36 +1,17 @@
 import {EventBridgeEvent, APIGatewayProxyResult} from "aws-lambda";
 
 import { DynamoDB } from "aws-sdk";
+import {TDetail, PaymentSource} from "./types";
 
 const dynamoDb = new DynamoDB.DocumentClient();
-
-type PaymentSource = "vendor" | "client";
-
-interface TDetail {
-    id: string;
-    paymentSource: PaymentSource;
-    destination: string;
-    currency: string;
-    amount: string;
-}
 
 export const handleVendorPaymentProcessing = async (
   event: EventBridgeEvent<string, TDetail>
 ): Promise<APIGatewayProxyResult> => {
   const {
-    body
+    detail: payment,
   } = event;
 
-  if (!body) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        error: "Missing body"
-      })
-    };
-  }
-
-  const payment = JSON.parse(body);
 
   await savePayment(payment, "vendor");
 
@@ -44,20 +25,10 @@ export const handleVendorPaymentProcessing = async (
 export const handleClientPaymentProcessing = async (
   event: EventBridgeEvent<string, TDetail>
 ): Promise<APIGatewayProxyResult> => {
+
   const {
-    body
+    detail: payment,
   } = event;
-
-  if (!body) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        error: "Missing body"
-      })
-    };
-  }
-
-  const payment = JSON.parse(body);
 
   await savePayment(payment, "client");
 
@@ -68,7 +39,7 @@ export const handleClientPaymentProcessing = async (
 };
 
 
-async function savePayment(payment: Record<string, string>, processedBy: PaymentSource) {
+async function savePayment(payment: TDetail, processedBy: PaymentSource) {
   await dynamoDb.put({
     TableName: "payment-api-test",
     Item: {

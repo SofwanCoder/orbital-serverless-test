@@ -4,14 +4,9 @@ import {
 
 import { EventBridge } from "aws-sdk";
 
-const eventBridge = new EventBridge();
+import {CreatePaymentRequest} from "./types";
 
-interface CreatePaymentRequest {
-  paymentSource: "client" | "vendor";
-  currency: string;
-  destination: string;
-  amount: string;
-}
+const eventBridge = new EventBridge();
 
 export const handlePaymentCreation = async (
   event: APIGatewayEvent,
