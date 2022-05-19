@@ -44,7 +44,7 @@ async function savePayment(payment: TDetail, processedBy: PaymentSource) {
     TableName: "payment-api-table",
     Item: {
       id: payment.id,
-      paymentSource: payment.paymentSource,
+      source: payment.paymentSource,
       destination: payment.destination,
       currency: payment.currency,
       amount: payment.amount,
